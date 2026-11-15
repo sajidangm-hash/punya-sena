@@ -127,6 +127,8 @@
       position: absolute;
       will-change: transform, opacity;
       animation: paperPlaneFlight 18s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+      pointer-events: auto;
+      cursor: pointer;
     }
 
     /* Second airplane with delay for varied aesthetic movement */
@@ -136,6 +138,8 @@
       animation: paperPlaneFlight 22s cubic-bezier(0.25, 1, 0.5, 1) infinite;
       animation-delay: 11s;
       top: 40vh;
+      pointer-events: auto;
+      cursor: pointer;
     }
 
     /* ========================================= */
@@ -186,10 +190,10 @@
   <!-- ================================================== -->
   <!-- AESTHETIC PAPER AIRPLANE (RIGHT TO LEFT FLIGHT)    -->
   <!-- ================================================== -->
-  <div class="paper-airplane-container" aria-hidden="true">
+  <div class="paper-airplane-container">
     <!-- Airplane 1: Smooth Origami Glider -->
-    <div class="paper-airplane flex items-center">
-      <svg width="80" height="52" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-md">
+    <div class="paper-airplane flex items-center" onclick="openSecretLetter()" title="Ada surat yang terselip... klik untuk buka">
+      <svg width="80" height="52" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-md hover:scale-110 transition">
         <!-- Main Body Pointing Left -->
         <!-- Top Wing -->
         <polygon points="4,26 74,8 50,26" fill="#FFFDF9" stroke="#C8BEAD" stroke-width="1.2" />
@@ -206,8 +210,8 @@
     </div>
 
     <!-- Airplane 2: Secondary Gentle Breeze Plane -->
-    <div class="paper-airplane-delayed flex items-center">
-      <svg width="60" height="40" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-sm opacity-85">
+    <div class="paper-airplane-delayed flex items-center" onclick="openSecretLetter()" title="Ada surat yang terselip... klik untuk buka">
+      <svg width="60" height="40" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-sm opacity-85 hover:scale-110 transition">
         <polygon points="4,26 74,8 50,26" fill="#FFFDF9" stroke="#C8BEAD" stroke-width="1.2" />
         <polygon points="4,26 74,44 50,26" fill="#F0E8DA" stroke="#C8BEAD" stroke-width="1.2" />
         <polygon points="4,26 74,26 50,30" fill="#E4D9C7" />
@@ -749,7 +753,14 @@
 
     <!-- Section 4: Scratchpad / Final Friendly Note -->
     <section class="max-w-xl mx-auto text-center space-y-4 pt-8">
-      <div class="transform -rotate-1 bg-amber-50 border border-amber-200 p-8 rounded-xl shadow-md">
+      <div class="relative transform -rotate-1 bg-amber-50 border border-amber-200 p-8 rounded-xl shadow-md">
+        
+        <!-- Discreet tucked folded note with paperclip (Easter egg) -->
+        <button onclick="openSecretLetter()" class="absolute -top-3.5 right-4 sm:right-6 bg-stone-100 hover:bg-amber-100/90 border border-stone-300 text-stone-600 hover:text-amber-900 px-3 py-1 rounded-md shadow-sm text-xs font-hand flex items-center gap-1.5 transition transform hover:rotate-3 cursor-pointer group" title="Buka lipatan kecil">
+          <span class="text-xs group-hover:scale-110 transition">📎</span>
+          <span class="text-stone-500 group-hover:text-amber-800 text-sm">ada lipatan kecil...</span>
+        </button>
+
         <h4 class="font-hand text-3xl font-bold text-stone-900 mb-2">P.S.</h4>
         <p class="font-hand text-2xl text-stone-700 leading-snug">
           "Ga perlu status yang bikin ribet, yang penting bisa terus ketawa bareng, saling dengerin, dan tetep jadi orang favorit satu sama lain."
@@ -762,8 +773,13 @@
 
   </main>
 
-  <footer class="border-t border-stone-300 py-8 text-center font-grotesk text-xs text-stone-500">
+  <footer class="border-t border-stone-300 py-8 text-center font-grotesk text-xs text-stone-500 space-y-2">
     <p>THE SENA SCRAPBOOK &bull; CREATED WITH COMFORT &amp; ZERO CRINGE</p>
+    <p>
+      <button onclick="openSecretLetter()" class="text-stone-400/80 hover:text-stone-700 transition inline-flex items-center gap-1 text-[11px] underline underline-offset-4 decoration-dotted">
+        <span>✉</span> <span>terselip sepucuk surat</span>
+      </button>
+    </p>
   </footer>
 
   <script>
@@ -1104,7 +1120,78 @@
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 1200);
     }
+
+    // ==========================================
+    // HIDDEN / SECRET LETTER EASTER EGG LOGIC
+    // ==========================================
+    function openSecretLetter() {
+      const modal = document.getElementById('secretLetterModal');
+      const card = document.getElementById('secretLetterCard');
+      if (!modal || !card) return;
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100', 'pointer-events-auto');
+      card.classList.remove('scale-95');
+      card.classList.add('scale-100');
+    }
+
+    function closeSecretLetter() {
+      const modal = document.getElementById('secretLetterModal');
+      const card = document.getElementById('secretLetterCard');
+      if (!modal || !card) return;
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-100');
+      card.classList.add('scale-95');
+    }
+
+    function handleLetterBackdropClick(e) {
+      if (e.target.id === 'secretLetterModal') {
+        closeSecretLetter();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSecretLetter();
+    });
   </script>
+
+  <!-- ========================================== -->
+  <!-- HIDDEN / SECRET LETTER MODAL (EASTER EGG)  -->
+  <!-- ========================================== -->
+  <div id="secretLetterModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-stone-950/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" onclick="handleLetterBackdropClick(event)">
+    <div id="secretLetterCard" class="relative max-w-lg w-full bg-[#FAF7EE] border-2 border-amber-200/90 rounded-2xl p-6 sm:p-9 shadow-2xl transform scale-95 transition-transform duration-300 font-hand text-stone-800">
+      
+      <!-- Vintage Tape on top -->
+      <div class="washi-tape -top-3 left-1/2 -translate-x-1/2 w-32 opacity-80"></div>
+
+      <!-- Header: subtle postage & stamp -->
+      <div class="flex items-center justify-between border-b border-stone-300/70 pb-3 mb-5">
+        <div class="flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-amber-700 text-amber-50 flex items-center justify-center text-xs font-serif shadow-inner">✉</span>
+          <span class="font-grotesk text-[11px] tracking-wider uppercase text-stone-500 font-bold">Catatan Terselip &bull; Untuk Sena</span>
+        </div>
+        <button onclick="closeSecretLetter()" class="text-stone-400 hover:text-stone-700 transition p-1 rounded-full hover:bg-stone-200" title="Tutup">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Letter Body -->
+      <div class="my-4 py-2 px-1">
+        <p class="font-hand text-2xl sm:text-3xl leading-relaxed text-stone-800 font-medium tracking-wide">
+          "Aku tidak tahu bagaimana hidup akan berjalan. Aku juga belum menjadi seseorang yang sempurna. Mungkin banyak hal akan berubah, mungkin kita akan menghadapi masa-masa sulit. Tapi kalau boleh meminta satu hal, tetaplah ada di sampingku selama perjalanan ini"
+        </p>
+      </div>
+
+      <!-- Subtle Footer inside Letter -->
+      <div class="mt-6 pt-3 border-t border-stone-300/60 flex items-center justify-between">
+        <span class="font-grotesk text-[11px] text-stone-400 italic">cuma catatan kecil yang terselip</span>
+        <button onclick="closeSecretLetter()" class="font-grotesk text-xs px-3.5 py-1.5 rounded-full bg-stone-200/80 hover:bg-stone-300 text-stone-700 transition font-medium">
+          Lipat &amp; Simpan Lagi
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Running Pets Parade (Yang Lari-Lari di Bawah Layar) -->
   <div id="petParade" class="walking-pets-track flex items-end gap-3 select-none">
