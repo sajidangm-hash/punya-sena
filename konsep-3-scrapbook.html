@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Scrapbook Zine — Sena</title>
+  <!-- Google Fonts: Handwritten & Editorial Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            hand: ['"Caveat"', 'cursive'],
+            grotesk: ['"Space Grotesk"', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            paper: {
+              bg: '#F5F2EB', // warm vintage paper
+              dark: '#24211E',
+              accent: '#D97706',
+              tape: 'rgba(235, 230, 218, 0.75)',
+              stamp: '#DC2626',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Paper Texture effect */
+    body {
+      background-color: #F4F1EA;
+      background-image: radial-gradient(#D6CEBE 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+    }
+
+    /* Tape styling */
+    .washi-tape {
+      background: rgba(220, 215, 200, 0.85);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      position: absolute;
+      height: 22px;
+      z-index: 20;
+    }
+
+    /* Polaroid Card 3D Flip */
+    .polaroid-container {
+      perspective: 1000px;
+    }
+    .polaroid-inner {
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .polaroid-container.is-flipped .polaroid-inner {
+      transform: rotateY(180deg);
+    }
+    .polaroid-front, .polaroid-back {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    /* Spin Animation for Cassette Reels */
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spinning {
+      animation: spin-slow 2.4s linear infinite;
+    }
+
+    /* Equalizer wave animation */
+    @keyframes eq-wave {
+      0%, 100% { height: 4px; }
+      50% { height: 16px; }
+    }
+    .eq-bar-1 { animation: eq-wave 0.8s ease-in-out infinite; }
+    .eq-bar-2 { animation: eq-wave 0.6s ease-in-out infinite 0.2s; }
+    .eq-bar-3 { animation: eq-wave 0.9s ease-in-out infinite 0.4s; }
+    .eq-bar-4 { animation: eq-wave 0.7s ease-in-out infinite 0.1s; }
+
+    /* ========================================= */
+    /* AESTHETIC PAPER AIRPLANE (RIGHT TO LEFT)  */
+    /* ========================================= */
+    @keyframes paperPlaneFlight {
+      0% {
+        transform: translate(110vw, 15vh) rotate(-18deg) scale(0.85);
+        opacity: 0;
+      }
+      5% {
+        opacity: 0.95;
+      }
+      30% {
+        transform: translate(70vw, 25vh) rotate(-12deg) scale(0.95);
+      }
+      60% {
+        transform: translate(35vw, 18vh) rotate(-22deg) scale(1);
+      }
+      90% {
+        opacity: 0.95;
+      }
+      100% {
+        transform: translate(-25vw, 32vh) rotate(-15deg) scale(0.9);
+        opacity: 0;
+      }
+    }
+
+    .paper-airplane-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 45;
+      overflow: hidden;
+    }
+
+    .paper-airplane {
+      position: absolute;
+      will-change: transform, opacity;
+      animation: paperPlaneFlight 18s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    }
+
+    /* Second airplane with delay for varied aesthetic movement */
+    .paper-airplane-delayed {
+      position: absolute;
+      will-change: transform, opacity;
+      animation: paperPlaneFlight 22s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+      animation-delay: 11s;
+      top: 40vh;
+    }
+
+    /* ========================================= */
+    /* SCROLL REVEAL & POLAROID IMAGE SAFEGUARD  */
+    /* ========================================= */
+    .aspect-square {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      min-height: 220px;
+      position: relative;
+      background-color: #E7E5E4;
+    }
+    .aspect-square img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .scroll-reveal-item {
+      opacity: 1 !important; /* Always visible by default - never hidden! */
+      transform: translateY(0) scale(1);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    /* Floating pet banner at bottom */
+    @keyframes walk-across {
+      0% { transform: translateX(-150px) scaleX(1); }
+      48% { transform: translateX(calc(100vw + 50px)) scaleX(1); }
+      50% { transform: translateX(calc(100vw + 50px)) scaleX(-1); }
+      98% { transform: translateX(-150px) scaleX(-1); }
+      100% { transform: translateX(-150px) scaleX(1); }
+    }
+    .walking-pets-track {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      z-index: 50;
+      pointer-events: auto;
+      animation: walk-across 30s linear infinite;
+    }
+  </style>
+</head>
+<body class="text-stone-800 font-sans antialiased selection:bg-amber-200 min-h-screen relative overflow-x-hidden">
+
+  <!-- ================================================== -->
+  <!-- AESTHETIC PAPER AIRPLANE (RIGHT TO LEFT FLIGHT)    -->
+  <!-- ================================================== -->
+  <div class="paper-airplane-container" aria-hidden="true">
+    <!-- Airplane 1: Smooth Origami Glider -->
+    <div class="paper-airplane flex items-center">
+      <svg width="80" height="52" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-md">
+        <!-- Main Body Pointing Left -->
+        <!-- Top Wing -->
+        <polygon points="4,26 74,8 50,26" fill="#FFFDF9" stroke="#C8BEAD" stroke-width="1.2" />
+        <!-- Bottom Wing -->
+        <polygon points="4,26 74,44 50,26" fill="#F0E8DA" stroke="#C8BEAD" stroke-width="1.2" />
+        <!-- Inner Center Crease -->
+        <polygon points="4,26 74,26 50,30" fill="#E4D9C7" />
+        <line x1="4" y1="26" x2="74" y2="26" stroke="#B8AB96" stroke-width="1.2" />
+      </svg>
+      <!-- Trailing Flight Dust / Dashed line -->
+      <svg width="140" height="24" viewBox="0 0 140 24" fill="none" class="opacity-50 -ml-3">
+        <path d="M 0 12 Q 35 22, 70 12 T 140 12" stroke="#9E9484" stroke-width="1.5" stroke-dasharray="5 5" fill="none" />
+      </svg>
+    </div>
+
+    <!-- Airplane 2: Secondary Gentle Breeze Plane -->
+    <div class="paper-airplane-delayed flex items-center">
+      <svg width="60" height="40" viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-sm opacity-85">
+        <polygon points="4,26 74,8 50,26" fill="#FFFDF9" stroke="#C8BEAD" stroke-width="1.2" />
+        <polygon points="4,26 74,44 50,26" fill="#F0E8DA" stroke="#C8BEAD" stroke-width="1.2" />
+        <polygon points="4,26 74,26 50,30" fill="#E4D9C7" />
+        <line x1="4" y1="26" x2="74" y2="26" stroke="#B8AB96" stroke-width="1.2" />
+      </svg>
+      <svg width="100" height="20" viewBox="0 0 100 20" fill="none" class="opacity-35 -ml-2">
+        <path d="M 0 10 Q 25 18, 50 10 T 100 10" stroke="#9E9484" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Header Banner -->
+  <header class="py-12 px-6 text-center relative overflow-hidden">
+    <div class="max-w-3xl mx-auto space-y-4">
+      
+      <!-- Stamp Badge -->
+      <div class="inline-block transform -rotate-3 border-2 border-stone-800 px-4 py-1.5 rounded-sm bg-white shadow-sm font-grotesk text-xs uppercase tracking-widest font-bold">
+        ISSUE NO. 01 &bull; UNEDITED CHRONICLES
+      </div>
+
+      <h1 class="text-5xl sm:text-7xl font-hand font-bold tracking-tight text-stone-900 leading-tight">
+        The Sena Scrapbook.
+      </h1>
+
+      <p class="text-sm sm:text-base text-stone-600 font-grotesk max-w-md mx-auto leading-relaxed">
+        Koleksi serpihan memori, foto polaroid random, dan hal-hal kecil yang bikin hari-hari bareng kamu selalu seru.
+      </p>
+
+      <div class="inline-flex items-center gap-2 text-xs font-hand text-stone-500 text-lg">
+        <i data-lucide="hand" class="w-4 h-4 text-amber-700"></i>
+        <span>*Klik kartu polaroid di bawah untuk flip & baca catatannya!</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
+
+    <!-- Section 1: Cascading Scroll-Reveal Polaroid Stream (Muncul Dari Atas ke Bawah Saat Scroll) -->
+    <section id="photoGallery">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 border-b-2 border-stone-800 pb-3 gap-2">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 bg-amber-600 rounded-full inline-block animate-pulse"></span>
+            <span class="font-grotesk font-bold text-xs uppercase tracking-widest text-amber-700">SCROLL DOWN CHRONICLES</span>
+          </div>
+          <h2 class="font-grotesk font-bold text-2xl sm:text-3xl uppercase tracking-wider text-stone-900">
+            Unfiltered Moments with Sena
+          </h2>
+          <p class="text-xs sm:text-sm font-grotesk text-stone-500">
+            Scroll ke bawah untuk memunculkan foto-foto candid dia satu per satu.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 font-hand text-xl text-stone-500">
+          <i data-lucide="arrow-down" class="w-4 h-4 animate-bounce text-amber-700"></i>
+          <span>Scroll down &amp; klik foto untuk cerita &raquo;</span>
+        </div>
+      </div>
+
+      <!-- Cascading Scroll Photo Stream (6 Staggered Real Polaroids with Top-to-Bottom Entry) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+        
+        <!-- Photo 1 (24 Okt: Kucing & High Five) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform -rotate-2 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 rotate-1"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto1.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-24 at 11.29.51.jpeg';" alt="Sena Moment 1" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">High Five Bareng Kucing 🐾</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>24 Okt &bull; Dapur Random</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform -rotate-2 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto1.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-24 at 11.29.51.jpeg';" alt="Sena Moment 1" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">24 Okt 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Cat Whisperer</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Muka kucingnya pasrah banget diajak high five wkwk. Dari semua foto random, ekspresi foto ini juaranya."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-amber-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 2 (27 Okt: Baju Garis-Garis & Jempol) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform rotate-1 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 -rotate-2"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto2.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-27 at 12.12.14.jpeg';" alt="Sena Moment 2" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">Pose Jempol Andalan 👍</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>27 Okt &bull; Classic Move</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform rotate-1 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto2.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-27 at 12.12.14.jpeg';" alt="Sena Moment 2" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">27 Okt 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Tanda Setuju</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Tiap kali bingung mau gaya apa pas difoto, refleksnya pasti ngacungin jempol. Simple, khas, dan ga pernah gagal bikin senyum."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-sky-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 3 (28 Okt: Muka Manyun / Duck Face) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform -rotate-1 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 rotate-3"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto3.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-28 at 07.56.09.jpeg';" alt="Sena Moment 3" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">Ekspresi Manyun 10/10 😗</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>28 Okt &bull; Duck Face Mode</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform -rotate-1 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto3.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-10-28 at 07.56.09.jpeg';" alt="Sena Moment 3" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">28 Okt 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Pout Level Max</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Poni depan + bibir manyun bebek. Mode kalau lagi pura-pura kesel atau ngambek tapi sedetik kemudian ketawa lagi."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-rose-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 4 (10 Nov: Sandaran di Rumput & Bunga Kamboja) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform rotate-2 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 -rotate-1"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto4.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-10 at 20.38.35.jpeg';" alt="Sena Moment 4" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">Nyender Santai di Luar 🌸</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>10 Nov &bull; Bunga Kamboja</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform rotate-2 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto4.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-10 at 20.38.35.jpeg';" alt="Sena Moment 4" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">10 Nov 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Comfort Space</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Ada bunga kamboja nyelip di rambut, santai nyender di rumput. Foto yang suasananya paling adem dan paling nyaman."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-emerald-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 5 (13 Nov: Candid Hitam Putih Bawa Cemilan) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform -rotate-2 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 rotate-2"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto5.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-13 at 23.24.20.jpeg';" alt="Sena Moment 5" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">Ketangkep Bawa Jajan 🥨</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>13 Nov &bull; Midnight Mission</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform -rotate-2 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto5.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-13 at 23.24.20.jpeg';" alt="Sena Moment 5" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">13 Nov 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Caught in 4K</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Mode rumah paling jujur: jalan bawa botol minum sama cemilan di tangan. Candid natural tanpa jaim sama sekali."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-purple-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 6 (14 Nov: Motoran Malam & Jempol Lagi) -->
+        <div class="scroll-reveal-item polaroid-container cursor-pointer" onclick="flipCard(this)">
+          <div class="polaroid-inner relative">
+            <!-- Front -->
+            <div class="polaroid-front bg-white p-4 pt-5 pb-8 rounded shadow-md border border-stone-200 transform rotate-1 hover:rotate-0 transition duration-300 relative">
+              <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 -rotate-3"></div>
+              <div class="aspect-square bg-stone-100 overflow-hidden rounded-sm mb-4">
+                <img src="img/foto6.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-14 at 00.43.34.jpeg';" alt="Sena Moment 6" class="w-full h-full object-cover">
+              </div>
+              <p class="font-hand text-2xl text-stone-800 text-center font-bold">Night Ride Jempol Part 2 🛵</p>
+              <div class="flex items-center justify-between text-[11px] font-grotesk text-stone-400 mt-2 px-1">
+                <span>14 Nov &bull; Motoran Malam</span>
+                <span>Klik untuk cerita ↺</span>
+              </div>
+            </div>
+
+            <!-- Back (Photo Still Visible + Tailored Note) -->
+            <div class="polaroid-back absolute inset-0 bg-[#FFFDF9] p-4 rounded shadow-lg border border-stone-300 flex flex-col justify-between transform rotate-1 overflow-hidden">
+              <div class="relative w-full h-44 rounded-sm overflow-hidden border border-stone-200 shadow-inner bg-stone-100 flex-shrink-0">
+                <img src="img/foto6.jpeg" onerror="this.onerror=null; this.src='img/WhatsApp Image 2026-11-14 at 00.43.34.jpeg';" alt="Sena Moment 6" class="w-full h-full object-cover">
+                <span class="absolute top-2 left-2 bg-stone-900/80 text-white text-[10px] px-2 py-0.5 rounded-full font-grotesk font-bold">14 Nov 2026</span>
+              </div>
+              <div class="space-y-1.5 px-1 py-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-grotesk uppercase tracking-wider font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Behind The Shot</span>
+                  <span class="text-[10px] font-mono text-stone-400">Night Rider</span>
+                </div>
+                <p class="font-hand text-xl text-stone-800 leading-snug">
+                  "Pake helm di tengah dinginnya angin malam, dan jempol andalannya ga ketinggalan! Momen jalan bareng yang selalu seru."
+                </p>
+              </div>
+              <div class="text-[11px] font-grotesk text-stone-400 border-t border-stone-200 pt-1.5 flex justify-between items-center px-1">
+                <span>Klik untuk balik ke depan</span>
+                <span class="text-amber-700 font-bold">Flip ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Video Snippets (Mini Reels) -->
+      <div class="mt-14 pt-8 border-t border-stone-300/80">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2">
+            <i data-lucide="video" class="w-4 h-4 text-amber-700"></i>
+            <span class="font-grotesk font-bold text-sm uppercase tracking-wider text-stone-800">
+              Live Motion Snippets (Video Reels)
+            </span>
+          </div>
+          <span class="font-hand text-lg text-stone-500">Video candid pendek &raquo;</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <!-- Video 1 -->
+          <div class="scroll-reveal-item bg-white p-4 pt-5 pb-6 rounded-2xl shadow-md border border-stone-200 relative transform -rotate-1">
+            <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 rotate-1"></div>
+            <div class="aspect-[9/16] max-h-[460px] bg-stone-900 rounded-xl overflow-hidden shadow-inner mx-auto">
+              <video src="img/video1.mp4" onerror="this.onerror=null; this.src='img/WhatsApp Video 2026-11-10 at 20.45.10.mp4';" controls playsinline class="w-full h-full object-cover"></video>
+            </div>
+            <p class="font-hand text-2xl text-stone-800 text-center font-bold mt-3">Candid Motion &bull; 10 Nov</p>
+            <p class="text-[11px] font-grotesk text-stone-400 text-center">Video snippet tanpa filter</p>
+          </div>
+
+          <!-- Video 2 -->
+          <div class="scroll-reveal-item bg-white p-4 pt-5 pb-6 rounded-2xl shadow-md border border-stone-200 relative transform rotate-1">
+            <div class="washi-tape w-24 -top-3 left-1/2 -translate-x-1/2 -rotate-2"></div>
+            <div class="aspect-[9/16] max-h-[460px] bg-stone-900 rounded-xl overflow-hidden shadow-inner mx-auto">
+              <video src="img/video2.mp4" onerror="this.onerror=null; this.src='img/WhatsApp Video 2026-11-11 at 09.26.59.mp4';" controls playsinline class="w-full h-full object-cover"></video>
+            </div>
+            <p class="font-hand text-2xl text-stone-800 text-center font-bold mt-3">Morning Clip &bull; 11 Nov</p>
+            <p class="text-[11px] font-grotesk text-stone-400 text-center">Momen random yang terekam</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: "Things That Remind Me of You" (Sticker & Element Collage) -->
+    <section class="bg-white/70 backdrop-blur border-2 border-stone-800 rounded-2xl p-8 sm:p-12 relative shadow-md">
+      <div class="absolute -top-4 left-8 bg-stone-900 text-white font-grotesk text-xs uppercase px-4 py-1 font-bold tracking-wider">
+        THE OBSERVATION NOTES
+      </div>
+
+      <h3 class="font-hand text-4xl text-stone-900 mb-6 font-bold">Things that immediately remind me of you:</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        
+        <!-- Item 1 -->
+        <div class="bg-[#FAF7F0] border border-stone-300 p-5 rounded-xl space-y-2 transform hover:rotate-1 transition">
+          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 mb-3">
+            <i data-lucide="coffee" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-grotesk font-bold text-sm text-stone-900">Es Kopi / Matcha Dingin</h4>
+          <p class="font-hand text-xl text-stone-600 leading-snug">
+            Tiap kali ngelewatin coffeeshop, langsung keinget pesanan wajib dia yang ga pernah ganti.
+          </p>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="bg-[#FAF7F0] border border-stone-300 p-5 rounded-xl space-y-2 transform hover:-rotate-1 transition">
+          <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-800 mb-3">
+            <i data-lucide="cloud-rain" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-grotesk font-bold text-sm text-stone-900">Aroma Hujan Sore</h4>
+          <p class="font-hand text-xl text-stone-600 leading-snug">
+            Pas hujan turun, hawanya cocok banget buat dengerin cerita-cerita random dia.
+          </p>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="bg-[#FAF7F0] border border-stone-300 p-5 rounded-xl space-y-2 transform hover:rotate-1 transition">
+          <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-800 mb-3">
+            <i data-lucide="smile" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-grotesk font-bold text-sm text-stone-900">Stiker Kucing Absurd</h4>
+          <p class="font-hand text-xl text-stone-600 leading-snug">
+            Tiap nemu stiker WhatsApp meme kucing bego, refleks mau langsung forward ke dia.
+          </p>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="bg-[#FAF7F0] border border-stone-300 p-5 rounded-xl space-y-2 transform hover:-rotate-1 transition">
+          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-800 mb-3">
+            <i data-lucide="moon" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-grotesk font-bold text-sm text-stone-900">Jam 01:00 Pagi</h4>
+          <p class="font-hand text-xl text-stone-600 leading-snug">
+            Waktu resmi di mana dia tiba-tiba aktif nanya hal paling di luar nalar manusia.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 3: Interactive Retro Cassette Tape & Playlist -->
+    <section class="bg-stone-900 text-stone-100 rounded-3xl p-6 sm:p-12 relative overflow-hidden shadow-2xl border-2 border-stone-800">
+      
+      <!-- Subtle top tape tag -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <span class="inline-block border border-stone-700 px-3 py-1 rounded text-[11px] font-grotesk uppercase tracking-widest text-amber-400 font-bold mb-2">
+            AUDIO CASSETTE C-60 &bull; DUAL SIDE MIXTAPE
+          </span>
+          <h3 class="font-hand text-4xl sm:text-5xl font-bold text-white tracking-tight">
+            The Unofficial Mixtape
+          </h3>
+          <p class="text-xs sm:text-sm font-grotesk text-stone-400 mt-1">
+            Pilihan lagu-lagu yang pas banget nemenin momen bareng dia. Pilih track favorit di bawah:
+          </p>
+        </div>
+
+        <!-- Side A / Side B Switcher Tabs -->
+        <div class="inline-flex p-1 bg-stone-950 border border-stone-800 rounded-xl self-start sm:self-auto font-grotesk text-xs">
+          <button onclick="switchMixtapeSide('A')" id="tabSideA" class="px-4 py-2 rounded-lg font-bold bg-amber-600 text-stone-950 transition">
+            SIDE A (Daylight & Hangouts)
+          </button>
+          <button onclick="switchMixtapeSide('B')" id="tabSideB" class="px-4 py-2 rounded-lg font-bold text-stone-400 hover:text-white transition">
+            SIDE B (Midnight & Deep Talks)
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Cassette Player Graphic (Left / Col 7) -->
+        <div class="lg:col-span-7 bg-[#1C1A17] border-2 border-stone-700 rounded-2xl p-6 sm:p-8 shadow-inner relative">
+          <!-- Screw Accents on corners -->
+          <span class="absolute top-3 left-3 w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 block"></span>
+          <span class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 block"></span>
+          <span class="absolute bottom-3 left-3 w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 block"></span>
+          <span class="absolute bottom-3 right-3 w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 block"></span>
+
+          <!-- Cassette Sticker Label -->
+          <div class="bg-[#F5F1E6] text-stone-900 rounded-lg p-4 border border-stone-400 shadow-md relative overflow-hidden">
+            <!-- Red/Blue accent stripe -->
+            <div class="h-1.5 w-full bg-gradient-to-r from-red-500 via-amber-500 to-sky-500 rounded-full mb-3"></div>
+
+            <div class="flex items-center justify-between border-b border-stone-300 pb-2 mb-3">
+              <span id="cassetteSideLabel" class="font-grotesk font-black text-xs uppercase tracking-wider bg-stone-900 text-white px-2 py-0.5 rounded">
+                SIDE A
+              </span>
+              <span class="font-grotesk text-[11px] font-bold text-stone-500 tracking-wider">
+                STEREO HI-FI 60 MIN
+              </span>
+            </div>
+
+            <!-- Current Playing Song Name on Cassette Label -->
+            <div class="text-center py-1">
+              <p id="cassetteSongTitle" class="font-hand text-3xl font-bold text-stone-900 truncate">
+                1. A Year Ago
+              </p>
+              <p id="cassetteSongArtist" class="font-grotesk text-xs font-semibold text-stone-600 uppercase tracking-wider">
+                James Arthur &bull; Acoustic
+              </p>
+            </div>
+
+            <!-- Tape Window with Spools -->
+            <div class="my-4 bg-stone-900/90 rounded-xl p-3 border-2 border-stone-400 flex items-center justify-between relative shadow-inner">
+              <!-- Left Reel -->
+              <div class="flex items-center gap-3">
+                <div id="reel1" class="w-14 h-14 rounded-full border-4 border-dashed border-stone-400 bg-stone-950 flex items-center justify-center transition">
+                  <div class="w-4 h-4 rounded-full bg-amber-500/80"></div>
+                </div>
+              </div>
+
+              <!-- Center Tape Window Bar -->
+              <div class="flex-1 mx-4 flex flex-col items-center justify-center">
+                <div class="w-full h-3 bg-stone-800 rounded border border-stone-700 relative overflow-hidden mb-1.5">
+                  <div id="tapeRibbon" class="h-full bg-amber-900/80 w-3/5"></div>
+                </div>
+                <!-- Equalizer bars (Visible when playing) -->
+                <div id="equalizer" class="flex items-end gap-1 h-4 opacity-40">
+                  <span class="w-1 bg-amber-400 rounded-full eq-bar-1 h-1"></span>
+                  <span class="w-1 bg-amber-400 rounded-full eq-bar-2 h-2"></span>
+                  <span class="w-1 bg-amber-400 rounded-full eq-bar-3 h-3"></span>
+                  <span class="w-1 bg-amber-400 rounded-full eq-bar-4 h-1.5"></span>
+                  <span class="w-1 bg-amber-400 rounded-full eq-bar-2 h-2.5"></span>
+                </div>
+              </div>
+
+              <!-- Right Reel -->
+              <div class="flex items-center gap-3">
+                <div id="reel2" class="w-14 h-14 rounded-full border-4 border-dashed border-stone-400 bg-stone-950 flex items-center justify-center transition">
+                  <div class="w-4 h-4 rounded-full bg-amber-500/80"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress Slider & Time -->
+            <div class="space-y-1 pt-1">
+              <input type="range" id="progressBar" min="0" max="100" value="0" oninput="seekAudio(this.value)" class="w-full h-1.5 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+              <div class="flex justify-between text-[11px] font-mono text-stone-600">
+                <span id="currentTime">00:00</span>
+                <span id="totalDuration">03:15</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cassette Physical Control Buttons -->
+          <div class="mt-6 pt-4 border-t border-stone-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button onclick="prevSong()" class="p-2.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition" title="Lagu Sebelumnya">
+                <i data-lucide="skip-back" class="w-4 h-4"></i>
+              </button>
+              <button onclick="toggleTapePlay()" id="playTapeBtn" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-grotesk font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-amber-600/30">
+                <i id="playIcon" data-lucide="play" class="w-4 h-4 fill-current"></i>
+                <span id="tapeBtnText">Play Tape</span>
+              </button>
+              <button onclick="nextSong()" class="p-2.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition" title="Lagu Berikutnya">
+                <i data-lucide="skip-forward" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2 font-mono text-xs text-stone-400">
+              <span id="tapeStatus">Status: Paused</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Playlist Tracks List (Right / Col 5) -->
+        <div class="lg:col-span-5 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-stone-800">
+            <span class="text-xs font-grotesk font-bold text-stone-300 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="list-music" class="w-4 h-4 text-amber-500"></i>
+              Tracklist Pilihan
+            </span>
+            <span class="text-[11px] font-mono text-stone-500" id="playlistSideIndicator">6 Tracks Total</span>
+          </div>
+
+          <!-- Dynamic Song Rows -->
+          <div id="tracklistContainer" class="space-y-2.5">
+            <!-- Injected by JavaScript -->
+          </div>
+
+          <p class="text-[11px] font-grotesk text-stone-500 pt-2 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-stone-400"></i>
+            <span>Klik lagu mana pun untuk memutar di kaset &bull; Musik lo-fi melodi santai</span>
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: Scratchpad / Final Friendly Note -->
+    <section class="max-w-xl mx-auto text-center space-y-4 pt-8">
+      <div class="transform -rotate-1 bg-amber-50 border border-amber-200 p-8 rounded-xl shadow-md">
+        <h4 class="font-hand text-3xl font-bold text-stone-900 mb-2">P.S.</h4>
+        <p class="font-hand text-2xl text-stone-700 leading-snug">
+          "Ga perlu status yang bikin ribet, yang penting bisa terus ketawa bareng, saling dengerin, dan tetep jadi orang favorit satu sama lain."
+        </p>
+        <span class="block mt-4 font-grotesk text-xs uppercase tracking-widest text-stone-400 font-bold">
+          &bull; End of Journal Volume 1 &bull;
+        </span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-stone-300 py-8 text-center font-grotesk text-xs text-stone-500">
+    <p>THE SENA SCRAPBOOK &bull; CREATED WITH COMFORT &amp; ZERO CRINGE</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function flipCard(container) {
+      container.classList.toggle('is-flipped');
+    }
+
+    // ==========================================
+    // MULTI-SONG REAL AUDIO ENGINE (MP3 FILES)
+    // ==========================================
+    const playlist = [
+      // SIDE A
+      {
+        id: 0,
+        side: 'A',
+        title: "A Year Ago",
+        artist: "James Arthur",
+        genre: "Acoustic / Comfort",
+        src: "song/James Arthur - A Year Ago.mp3",
+        duration: "03:59",
+        durationSec: 239,
+        notes: "Lagu santai penuh kenangan bareng Sena"
+      },
+      {
+        id: 1,
+        side: 'A',
+        title: "Hard 2 Face Reality",
+        artist: "Justin Bieber ft. Poo Bear",
+        genre: "R&B / Late Night Chill",
+        src: "song/Justin Bieber, Poo Bear, Jay Electronica - Hard 2 Face Reality (Lyrics _ Lyric Video) - Revo-luution.mp3",
+        duration: "03:15",
+        durationSec: 195,
+        notes: "Lagu chill yang sering diputar pas lagi berdua"
+      },
+
+      // SIDE B
+      {
+        id: 2,
+        side: 'B',
+        title: "Gerua (From Dilwale)",
+        artist: "Arijit Singh, Pritam",
+        genre: "Romantic / Nostalgia",
+        src: "song/Arijit Singh, Pritam - Gerua (Lyrics) From Dilwale.mp3",
+        duration: "05:45",
+        durationSec: 345,
+        notes: "Soundtrack legendaris penuh nostalgia"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let currentSide = 'A';
+    let isPlaying = false;
+    const realAudio = new Audio();
+    realAudio.preload = "auto";
+    realAudio.src = playlist[0].src;
+
+    // Real audio listeners
+    realAudio.addEventListener('timeupdate', () => {
+      if (!realAudio.duration || isNaN(realAudio.duration)) return;
+      const percent = (realAudio.currentTime / realAudio.duration) * 100;
+      document.getElementById('progressBar').value = percent;
+      document.getElementById('currentTime').innerText = formatTime(Math.floor(realAudio.currentTime));
+      document.getElementById('totalDuration').innerText = formatTime(Math.floor(realAudio.duration));
+      document.getElementById('tapeRibbon').style.width = `${Math.min(95, 20 + (percent * 0.75))}%`;
+    });
+
+    realAudio.addEventListener('loadedmetadata', () => {
+      if (realAudio.duration && !isNaN(realAudio.duration)) {
+        document.getElementById('totalDuration').innerText = formatTime(Math.floor(realAudio.duration));
+      }
+    });
+
+    realAudio.addEventListener('ended', () => {
+      nextSong();
+    });
+
+    realAudio.addEventListener('error', (e) => {
+      console.warn("Audio load warning:", e);
+      document.getElementById('tapeStatus').innerText = "Status: File Loaded (Click Play)";
+    });
+
+    function renderTracklist() {
+      const container = document.getElementById('tracklistContainer');
+      const filtered = playlist.filter(t => t.side === currentSide);
+      
+      container.innerHTML = filtered.map(t => {
+        const isActive = t.id === currentTrackIndex;
+        return `
+          <div onclick="selectTrack(${t.id})" class="p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between group ${
+            isActive 
+              ? 'bg-amber-600/20 border-amber-500 text-white shadow-md' 
+              : 'bg-stone-950/60 border-stone-800 text-stone-300 hover:border-stone-600 hover:bg-stone-900'
+          }">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center font-grotesk font-bold text-xs ${
+                isActive ? 'bg-amber-500 text-stone-950' : 'bg-stone-800 text-stone-400 group-hover:text-stone-200'
+              }">
+                ${isActive && isPlaying ? '<i data-lucide="music" class="w-3.5 h-3.5 animate-bounce"></i>' : (t.id + 1)}
+              </div>
+              <div>
+                <p class="text-xs font-grotesk font-semibold text-white group-hover:text-amber-400 transition">
+                  ${t.title}
+                </p>
+                <p class="text-[11px] text-stone-400 font-sans">
+                  ${t.artist} &bull; <span class="italic text-stone-500">${t.genre}</span>
+                </p>
+              </div>
+            </div>
+            
+            <div class="text-right">
+              <span class="text-xs font-mono text-stone-400 block">${t.duration}</span>
+              ${isActive ? '<span class="text-[9px] font-mono text-amber-400 font-bold">LOADED</span>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function updateCassetteDisplay() {
+      const track = playlist[currentTrackIndex];
+      document.getElementById('cassetteSongTitle').innerText = `${track.id + 1}. ${track.title}`;
+      document.getElementById('cassetteSongArtist').innerText = `${track.artist} (${track.genre})`;
+      document.getElementById('cassetteSideLabel').innerText = `SIDE ${track.side}`;
+      document.getElementById('totalDuration').innerText = track.duration;
+      
+      if (track.side !== currentSide) {
+        currentSide = track.side;
+        updateSideTabsUI();
+      }
+
+      renderTracklist();
+    }
+
+    function switchMixtapeSide(side) {
+      currentSide = side;
+      updateSideTabsUI();
+      const firstOnSide = playlist.find(t => t.side === side);
+      if (firstOnSide) {
+        selectTrack(firstOnSide.id);
+      }
+    }
+
+    function updateSideTabsUI() {
+      const tabA = document.getElementById('tabSideA');
+      const tabB = document.getElementById('tabSideB');
+
+      if (currentSide === 'A') {
+        tabA.className = "px-4 py-2 rounded-lg font-bold bg-amber-600 text-stone-950 transition";
+        tabB.className = "px-4 py-2 rounded-lg font-bold text-stone-400 hover:text-white transition";
+      } else {
+        tabB.className = "px-4 py-2 rounded-lg font-bold bg-amber-600 text-stone-950 transition";
+        tabA.className = "px-4 py-2 rounded-lg font-bold text-stone-400 hover:text-white transition";
+      }
+    }
+
+    function selectTrack(index) {
+      currentTrackIndex = index;
+      const track = playlist[currentTrackIndex];
+      realAudio.src = track.src;
+      realAudio.currentTime = 0;
+      updateCassetteDisplay();
+
+      if (isPlaying) {
+        realAudio.play().catch(e => console.log('Autoplay policy', e));
+      } else {
+        toggleTapePlay();
+      }
+    }
+
+    function nextSong() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      const track = playlist[currentTrackIndex];
+      realAudio.src = track.src;
+      realAudio.currentTime = 0;
+      updateCassetteDisplay();
+      if (isPlaying) {
+        realAudio.play().catch(e => console.log(e));
+      }
+    }
+
+    function prevSong() {
+      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      const track = playlist[currentTrackIndex];
+      realAudio.src = track.src;
+      realAudio.currentTime = 0;
+      updateCassetteDisplay();
+      if (isPlaying) {
+        realAudio.play().catch(e => console.log(e));
+      }
+    }
+
+    function toggleTapePlay() {
+      isPlaying = !isPlaying;
+
+      const r1 = document.getElementById('reel1');
+      const r2 = document.getElementById('reel2');
+      const btnText = document.getElementById('tapeBtnText');
+      const playIcon = document.getElementById('playIcon');
+      const status = document.getElementById('tapeStatus');
+      const eq = document.getElementById('equalizer');
+
+      if (isPlaying) {
+        realAudio.play().then(() => {
+          r1.classList.add('spinning');
+          r2.classList.add('spinning');
+          btnText.innerText = "Pause Tape";
+          playIcon.setAttribute('data-lucide', 'pause');
+          status.innerText = "Status: Playing MP3...";
+          status.classList.add('text-amber-400');
+          eq.classList.remove('opacity-40');
+          eq.classList.add('opacity-100');
+          lucide.createIcons();
+        }).catch(err => {
+          console.log("Playback error or autoplay restriction:", err);
+          r1.classList.add('spinning');
+          r2.classList.add('spinning');
+          btnText.innerText = "Pause Tape";
+          playIcon.setAttribute('data-lucide', 'pause');
+          status.innerText = "Status: Tap anywhere to play";
+          lucide.createIcons();
+        });
+      } else {
+        realAudio.pause();
+        r1.classList.remove('spinning');
+        r2.classList.remove('spinning');
+        btnText.innerText = "Play Tape";
+        playIcon.setAttribute('data-lucide', 'play');
+        status.innerText = "Status: Paused";
+        status.classList.remove('text-amber-400');
+        eq.classList.remove('opacity-100');
+        eq.classList.add('opacity-40');
+        lucide.createIcons();
+      }
+      renderTracklist();
+    }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = (seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function seekAudio(val) {
+      if (realAudio.duration && !isNaN(realAudio.duration)) {
+        realAudio.currentTime = (val / 100) * realAudio.duration;
+      }
+    }
+
+    // Initialize display on load
+    updateCassetteDisplay();
+
+    // ==================================================
+    // SCROLL REVEAL OBSERVER (FOTO MUNCUL DARI ATAS)
+    // ==================================================
+    function revealAllPhotos() {
+      document.querySelectorAll('.scroll-reveal-item').forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('is-visible');
+        }, index * 60);
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      const photoObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05 });
+
+      document.querySelectorAll('.scroll-reveal-item').forEach(el => {
+        photoObserver.observe(el);
+      });
+    } else {
+      revealAllPhotos();
+    }
+
+    // Safe fallback to guarantee photos are 100% visible on load
+    window.addEventListener('DOMContentLoaded', revealAllPhotos);
+    window.addEventListener('load', revealAllPhotos);
+    setTimeout(revealAllPhotos, 500);
+
+    // ==================================================
+    // RUNNING ANIMALS (YANG LARI-LARI DI BAWAH LAYAR)
+    // ==================================================
+    function interactRunningPet(type, event) {
+      const emoji = type === 'cat' ? '🐱' : '🐶';
+      spawnFloatingEmoji(event.clientX, event.clientY, emoji);
+      spawnFloatingEmoji(event.clientX + 10, event.clientY - 15, '💖');
+    }
+
+    function spawnFloatingEmoji(x, y, emoji) {
+      const el = document.createElement('div');
+      el.className = 'paw-print-pop';
+      el.innerText = emoji;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+  </script>
+
+  <!-- Running Pets Parade (Yang Lari-Lari di Bawah Layar) -->
+  <div id="petParade" class="walking-pets-track flex items-end gap-3 select-none">
+    <!-- Dog Walking/Running -->
+    <div class="flex flex-col items-center cursor-pointer transform hover:scale-110 transition" onclick="interactRunningPet('dog', event)" title="Choco lagi jalan di layar!">
+      <span class="text-[10px] font-mono bg-stone-900/80 text-white px-2 py-0.5 rounded-full mb-1">Choco 🐶</span>
+      <div class="w-12 h-12 anim-bounce">
+        <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+          <ellipse cx="50" cy="65" rx="26" ry="16" fill="#D97706" />
+          <path class="anim-tail-wag" d="M 72 65 C 85 60, 92 48, 86 38" fill="none" stroke="#B45309" stroke-width="7" stroke-linecap="round" />
+          <circle cx="36" cy="45" r="18" fill="#F59E0B" />
+          <circle cx="30" cy="44" r="3" fill="#451A03" />
+          <ellipse cx="23" cy="50" rx="7" ry="5" fill="#FEF3C7" />
+          <circle cx="21" cy="48" r="2.5" fill="#451A03" />
+          <path d="M 40 40 C 48 45, 52 62, 44 65" fill="#92400E" />
+          <!-- legs -->
+          <ellipse cx="38" cy="80" rx="4" ry="7" fill="#B45309" />
+          <ellipse cx="62" cy="80" rx="4" ry="7" fill="#B45309" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Cat Trotting Behind -->
+    <div class="flex flex-col items-center cursor-pointer transform hover:scale-110 transition" onclick="interactRunningPet('cat', event)" title="Mimi lagi ngintil di layar!">
+      <span class="text-[10px] font-mono bg-stone-900/80 text-white px-2 py-0.5 rounded-full mb-1">Mimi 🐱</span>
+      <div class="w-10 h-10 anim-bounce" style="animation-delay: 0.2s;">
+        <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+          <ellipse cx="50" cy="65" rx="22" ry="14" fill="#FBBF24" />
+          <path class="anim-cat-tail" d="M 70 65 C 84 62, 88 45, 78 38" fill="none" stroke="#D97706" stroke-width="6" stroke-linecap="round" />
+          <circle cx="34" cy="48" r="15" fill="#F59E0B" />
+          <polygon points="26,38 20,24 35,32" fill="#D97706" />
+          <polygon points="40,38 48,24 45,34" fill="#D97706" />
+          <circle cx="30" cy="48" r="2.5" fill="#78350F" />
+          <!-- legs -->
+          <ellipse cx="38" cy="78" rx="3.5" ry="6" fill="#D97706" />
+          <ellipse cx="60" cy="78" rx="3.5" ry="6" fill="#D97706" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
